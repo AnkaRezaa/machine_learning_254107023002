@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiBurnOut AI - Sistem Skrining Risiko Kelelahan Kerja</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    AB
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-none">AntiBurnOut AI</h1>
+                    <p class="text-xs text-slate-500 mt-1">Mental Health & Burnout Risk Screening Engine</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Model AI Aktif</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Form -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-900">Formulir Skrining Mandiri</h2>
+                    <p class="text-sm text-slate-500 mt-1">Masukkan parameter kerja dan kesehatan mental Anda untuk mendapatkan evaluasi risiko berbasis Jaringan Saraf Tiruan (ANN).</p>
+                </div>
+
+                <form action="/predict" method="POST" class="space-y-5">
+                    <!-- Grid Input 1: Beban Kerja -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-700">1. Parameter Beban Kerja</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Usia Responden (Tahun)</label>
+                                <input type="number" step="1" name="Age" min="18" max="75" value="{{ last_inputs.get('Age', 28) if last_inputs else 28 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Jam Kerja per Minggu</label>
+                                <input type="number" step="0.5" name="Work_Hours_Per_Week" min="10" max="100" value="{{ last_inputs.get('Work_Hours_Per_Week', 45) if last_inputs else 45 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Skor Keseimbangan Hidup-Kerja (1 - 10)</label>
+                                <input type="number" step="0.5" name="Work_Life_Balance" min="1" max="10" value="{{ last_inputs.get('Work_Life_Balance', 6) if last_inputs else 6 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Kepuasan Kerja (1 - 10)</label>
+                                <input type="number" step="0.5" name="Job_Satisfaction" min="1" max="10" value="{{ last_inputs.get('Job_Satisfaction', 7) if last_inputs else 7 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid Input 2: Kesehatan Psikologis -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-rose-700">2. Indikator Psikologis</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Skor Cemas (0-100)</label>
+                                <input type="number" step="1" name="Anxiety_Score" min="0" max="100" value="{{ last_inputs.get('Anxiety_Score', 40) if last_inputs else 40 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Skor Depresi (0-100)</label>
+                                <input type="number" step="1" name="Depression_Score" min="0" max="100" value="{{ last_inputs.get('Depression_Score', 35) if last_inputs else 35 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Skor Mood (0-100)</label>
+                                <input type="number" step="1" name="Mood_Score" min="0" max="100" value="{{ last_inputs.get('Mood_Score', 65) if last_inputs else 65 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid Input 3: Gaya Hidup & Kebiasaan -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700">3. Gaya Hidup & Kebiasaan</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tidur (Jam/Hari)</label>
+                                <input type="number" step="0.5" name="Sleep_Hours" min="2" max="14" value="{{ last_inputs.get('Sleep_Hours', 7) if last_inputs else 7 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Olahraga (Jam/Mgg)</label>
+                                <input type="number" step="0.5" name="Physical_Activity_Hours" min="0" max="30" value="{{ last_inputs.get('Physical_Activity_Hours', 3) if last_inputs else 3 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Screen Time (Jam/Hari)</label>
+                                <input type="number" step="0.5" name="Screen_Time_Hours" min="0" max="24" value="{{ last_inputs.get('Screen_Time_Hours', 6) if last_inputs else 6 }}" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition duration-150 flex items-center justify-center space-x-2">
+                        <span>Analisis Risiko Burnout Sekarang</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: Result Card -->
+            <div class="lg:col-span-5 space-y-6">
+                {% if result %}
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Hasil Evaluasi AI</span>
+                    <div class="mt-3 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-extrabold text-slate-900">{{ result.meta.status }}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Tingkat Keyakinan: <strong>{{ result.confidence }}%</strong></p>
+                        </div>
+                        <span class="px-3 py-1 text-xs font-bold rounded-full border {{ result.meta.badge }}">
+                            {{ result.risk_level }}
+                        </span>
+                    </div>
+
+                    <!-- Probability Bars -->
+                    <div class="mt-6 space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                                <span>Risiko Rendah (Low)</span>
+                                <span>{{ result.probabilities.Low }}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div class="bg-emerald-500 h-2 rounded-full" style="width: {{ result.probabilities.Low }}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                                <span>Risiko Sedang (Moderate)</span>
+                                <span>{{ result.probabilities.Moderate }}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div class="bg-amber-500 h-2 rounded-full" style="width: {{ result.probabilities.Moderate }}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                                <span>Risiko Tinggi (High)</span>
+                                <span>{{ result.probabilities.High }}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div class="bg-rose-500 h-2 rounded-full" style="width: {{ result.probabilities.High }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advice Box -->
+                    <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Rekomendasi Intervensi:</h4>
+                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">{{ result.meta.advice }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Empty Placeholder -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center flex flex-col items-center justify-center min-h-[350px]">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800">Menunggu Input Data</h3>
+                    <p class="text-xs text-slate-500 mt-1 max-w-xs">Silakan lengkapi formulir di samping dan tekan tombol evaluasi untuk melihat hasil prediksi model secara instan.</p>
+                </div>
+                {% endif %}
+
+                <!-- API Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">REST API Endpoint</h4>
+                    <p class="text-xs text-slate-500 mt-1">Aplikasi ini juga menyediakan endpoint inferensi programmatic via HTTP POST JSON:</p>
+                    <div class="mt-3 bg-slate-900 text-slate-200 p-3 rounded-lg text-xs font-mono overflow-x-auto">
+                        curl -X POST http://localhost:7860/predict &bsol;<br>
+                        &nbsp;&nbsp;-H "Content-Type: application/json" &bsol;<br>
+                        &nbsp;&nbsp;-d '{"Age": 28, "Work_Hours_Per_Week": 50, ...}'
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-400">
+        AntiBurnOut Screening Engine &copy; 2026 MUHAMMAD ANKA REZA (NIM: 254107023002) - TI/3H
+    </footer>
+</body>
+</html>
